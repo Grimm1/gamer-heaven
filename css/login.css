@@ -1,0 +1,277 @@
+/* Gamer Heaven Login Page Styles */
+:root {
+    --primary-color: #00ffcc;
+    --accent-color: #ff007a;
+    --background-color: #1a1a1a;
+    --content-background: #2e2e2e;
+    --gradient-start: #1c2526;
+    --gradient-end: #2e3b3e;
+    --border-color: #444;
+    --text-color: #e0e0e0;
+    --meta-color: #b0b0b0;
+    --body-font: 'Orbitron', Arial, sans-serif;
+}
+
+body.login {
+    background: var(--background-color) !important;
+    font-family: var(--body-font) !important;
+    color: var(--text-color) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    overflow: auto !important;
+}
+
+body.login::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end)) !important;
+    opacity: 0.5;
+    z-index: -1;
+}
+
+/* Optional: Reuse theme background images */
+body.login .gamer-heaven-left-background,
+body.login .gamer-heaven-right-background {
+    position: fixed;
+    z-index: -1;
+    max-width: 50vw;
+    max-height: 100vh;
+    object-fit: cover;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+body.login .gamer-heaven-left-background:hover,
+body.login .gamer-heaven-right-background:hover {
+    opacity: 1;
+}
+
+body.login .gamer-heaven-left-background {
+    bottom: 10px;
+    left: 0;
+    object-position: left bottom;
+}
+
+body.login .gamer-heaven-right-background {
+    bottom: 10px;
+    right: 0;
+    object-position: right bottom;
+}
+
+@media (max-width: 600px) {
+    body.login .gamer-heaven-left-background,
+    body.login .gamer-heaven-right-background {
+        max-width: 40vw;
+        max-height: 80vh;
+        bottom: 10px;
+    }
+}
+
+/* Center all login elements */
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.login h1 a {
+    background-size: contain !important;
+    width: 300px !important;
+    height: 100px !important;
+    margin: 0 auto 25px !important;
+    display: block !important;
+    text-indent: -9999px !important;
+}
+
+.login #loginform {
+    background: var(--content-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 5px !important;
+    padding: 26px 24px !important;
+    box-shadow: 0 0 10px rgba(var(--primary-color-rgb), 0.3) !important;
+    max-width: 320px !important;
+    width: 100%;
+    margin: 0 auto 10px !important;
+}
+
+.login label {
+    color: var(--text-color) !important;
+    font-size: 14px !important;
+    text-transform: uppercase !important;
+}
+
+.login input[type="text"],
+.login input[type="password"] {
+    background: var(--sidebar-background) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-color) !important;
+    border-radius: 5px !important;
+    padding: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-family: var(--body-font) !important;
+}
+
+.login input[type="text"]:focus,
+.login input[type="password"]:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 5px rgba(var(--primary-color-rgb), 0.5) !important;
+}
+
+.login input[type="submit"] {
+    background: var(--primary-color) !important;
+    color: #1a1a1a !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 5px !important;
+    font-family: var(--body-font) !important;
+    font-size: 14px !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    transition: background 0.3s !important;
+}
+
+.login input[type="submit"]:hover {
+    background: var(--accent-color) !important;
+    color: #fff !important;
+}
+
+.login .button-primary {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #1a1a1a !important;
+    text-transform: uppercase !important;
+    font-family: var(--body-font) !important;
+}
+
+.login .button-primary:hover {
+    background: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+    color: #fff !important;
+}
+
+/* Language Switcher */
+.login #language-switcher {
+    margin: 10px auto 10px !important;
+    max-width: 320px !important;
+    width: 100%;
+    text-align: center;
+}
+
+.login #language-switcher select {
+    background: var(--sidebar-background) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-color) !important;
+    border-radius: 5px !important;
+    padding: 8px !important;
+    font-family: var(--body-font) !important;
+    font-size: 14px !important;
+    width: 100%;
+    max-width: 200px;
+}
+
+.login #language-switcher select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 5px rgba(var(--primary-color-rgb), 0.5) !important;
+}
+
+.login #language-switcher input[type="submit"] {
+    background: var(--primary-color) !important;
+    color: #1a1a1a !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    border-radius: 5px !important;
+    font-family: var(--body-font) !important;
+    font-size: 14px !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    transition: background 0.3s !important;
+    margin-left: 5px;
+}
+
+.login #language-switcher input[type="submit"]:hover {
+    background: var(--accent-color) !important;
+    color: #fff !important;
+}
+
+.login #nav,
+.login #backtoblog {
+    text-align: center !important;
+    margin: 10px auto !important;
+    max-width: 320px !important;
+    width: 100%;
+}
+
+.login #nav a,
+.login #backtoblog a {
+    color: var(--primary-color) !important;
+    text-decoration: none !important;
+    font-size: 13px !important;
+    font-family: var(--body-font) !important;
+}
+
+.login #nav a:hover,
+.login #backtoblog a:hover {
+    color: var(--accent-color) !important;
+}
+
+.login .message,
+.login .success,
+.login .error {
+    background: var(--sidebar-background) !important;
+    border-left: 4px solid var(--primary-color) !important;
+    color: var(--text-color) !important;
+    padding: 12px !important;
+    margin: 0 auto 20px !important;
+    max-width: 320px !important;
+    width: 100%;
+    border-radius: 5px !important;
+    font-family: var(--body-font) !important;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .login {
+        padding: 15px;
+    }
+
+    .login #loginform {
+        padding: 20px !important;
+        max-width: 90% !important;
+    }
+
+    .login h1 a {
+        width: 200px !important;
+        height: 67px !important;
+    }
+
+    .login #language-switcher {
+        max-width: 90% !important;
+    }
+
+    .login #language-switcher select {
+        max-width: 100%;
+    }
+
+    .login #nav,
+    .login #backtoblog {
+        max-width: 90% !important;
+    }
+
+    .login .message,
+    .login .success,
+    .login .error {
+        max-width: 90% !important;
+    }
+}
