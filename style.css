@@ -1,9 +1,10 @@
 /*
  Theme Name: Gamer Heaven
+
  Author: Grimms3dworlds
  Author URI: https://grimms3dworlds.ddns.net
  Description: A classic WordPress theme with fixed header/footer and two-column layout for gaming enthusiasts.
- Version: 1.0.8
+ Version: 1.0.7
  License: GNU General Public License v2 or later
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Text Domain: gamer-heaven
@@ -222,56 +223,78 @@ footer {
     }
 }
 
-/* Main Content and Sidebar Layout */
-.main-content {
-    width: 1000px;
-    margin: 170px auto 60px; /* Increased margin-top to add space below fixed header */
-    background: var(--content-background);
-    padding: 20px;
-    overflow-y: auto;
-    border: 1px solid var(--border-color);
-    max-height: calc(100vh - 290px); /* Adjusted for increased margin */
+.container {
+    margin: 150px auto 60px;
+    width: 1232px;
+    max-height: calc(100vh - 250px);
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
     box-sizing: border-box;
+    padding: 0;
 }
 
-.main-content.has-admin-bar {
-    margin-top: 202px; /* Adjusted for admin bar */
-    max-height: calc(100vh - 322px);
+.container.has-admin-bar {
+    margin-top: 182px;
+    max-height: calc(100vh - 282px);
 }
 
 @media screen and (max-width: 782px) {
-    .main-content.has-admin-bar {
-        margin-top: 216px;
-        max-height: calc(100vh - 336px);
+    .container.has-admin-bar {
+        margin-top: 196px;
+        max-height: calc(100vh - 296px);
+    }
+}
+
+.container:has(.sidebar.has-scrollbar) {
+    width: 1290px;
+}
+
+.main-content {
+    flex: 0 0 1000px;
+    background: var(--content-background);
+    padding: 20px 20px 20px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    max-height: calc(100vh - 250px);
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.container.has-admin-bar .main-content {
+    max-height: calc(100vh - 282px);
+}
+
+@media screen and (max-width: 782px) {
+    .container.has-admin-bar .main-content {
+        max-height: calc(100vh - 296px);
     }
 }
 
 .sidebar {
-    width: 282px;
-    margin: 170px auto 60px; /* Match main-content */
+    flex: 0 0 282px;
     align-self: flex-start;
     background: var(--sidebar-background);
     padding: 4px;
     overflow-y: auto;
     border: 1px solid var(--border-color);
-    max-height: calc(100vh - 290px); /* Adjusted for increased margin */
+    max-height: calc(100vh - 250px);
     box-sizing: border-box;
+    margin: 0;
 }
 
-.sidebar.has-admin-bar {
-    margin-top: 202px;
-    max-height: calc(100vh - 322px);
+.container.has-admin-bar .sidebar {
+    max-height: calc(100vh - 282px);
 }
 
 @media screen and (max-width: 782px) {
-    .sidebar.has-admin-bar {
-        margin-top: 216px;
-        max-height: calc(100vh - 336px);
+    .container.has-admin-bar .sidebar {
+        max-height: calc(100vh - 296px);
     }
 }
 
 .sidebar.has-scrollbar {
-    width: 260px;
+    flex: 0 0 260px;
 }
 
 /* Sidebar widget styles */
@@ -341,8 +364,6 @@ footer {
     filter: drop-shadow(0 0 5px var(--primary-color));
     margin: 0;
     padding: 0;
-    border-radius: 10px;
-    border: 2px solid var(--primary-color);
 }
 
 .header-right {
@@ -403,23 +424,19 @@ footer {
     text-align: right;
 }
 
-/* Main Navigation Styles */
 .main-navigation ul {
-    /* Reset default list styles for the main menu */
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
 .main-navigation ul li {
-    /* Display top-level menu items inline for horizontal layout */
     display: inline-block;
     margin-left: 20px;
-    position: relative; /* Position relative for submenu positioning */
+    position: relative;
 }
 
 .main-navigation ul li a {
-    /* Style top-level menu links */
     color: var(--primary-color);
     text-decoration: none;
     font-size: 16px;
@@ -431,62 +448,38 @@ footer {
 }
 
 .main-navigation ul ul {
-    /* Style submenus (hidden by default) */
     display: none;
     position: absolute;
-    top: 100%; /* Position below the parent menu item */
+    top: 100%;
     left: 0;
-    background: var(--content-background); /* Match content background for consistency */
-    border: 1px solid var(--border-color); /* Add border for visual separation */
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
+    background: var(--gradient-start);
+    padding: 10px;
+    border: 1px solid var(--primary-color);
     z-index: 1000;
-    width: auto; /* Allow submenu to expand based on content */
-    min-width: 200px; /* Ensure minimum width for readability */
-    padding: 5px 0; /* Add padding inside submenu */
 }
 
 .main-navigation ul li:hover > ul {
-    /* Show submenu on hover */
     display: block;
 }
 
 .main-navigation ul ul li {
-    /* Style submenu items */
-    display: block; /* Stack submenu items vertically */
+    display: block;
     margin: 0;
-    width: 100%; /* Ensure submenu items take full width of submenu */
 }
 
 .main-navigation ul ul li a {
-    /* Style submenu links */
-    color: var(--text-color);
+    color: var(--primary-color);
     font-size: 14px;
     font-family: var(--body-font);
-    padding: 8px 15px; /* Add padding for better spacing */
-    display: block; /* Make links full-width for easier clicking */
-    white-space: nowrap; /* Prevent text wrapping to ensure submenu width fits content */
-    transition: background 0.3s, color 0.3s; /* Smooth transition for hover effects */
 }
 
 .main-navigation ul ul li a:hover {
-    /* Hover effect for submenu links */
-    color: var(--primary-color);
-    background: var(--sidebar-background);
+    color: var(--accent-color);
 }
 
-/* Nested Submenus (Third Level and Beyond) */
-.main-navigation ul ul ul {
-    /* Position nested submenus to the right of their parent */
-    top: 0;
-    left: 100%;
-    margin-left: 1px; /* Small gap to prevent overlap */
-}
-
-/* Fallback menu styling for when JavaScript fails or in Customizer */
+/* Fallback menu styling */
 .main-navigation .menu > ul,
 .main-navigation .menu > div > ul {
-    /* Reset default list styles for fallback menu */
     list-style: none;
     margin: 0;
     padding: 0;
@@ -494,7 +487,6 @@ footer {
 
 .main-navigation .menu > ul li,
 .main-navigation .menu > div > ul li {
-    /* Style top-level menu items in fallback menu */
     display: inline-block;
     margin-left: 20px;
     position: relative;
@@ -502,7 +494,6 @@ footer {
 
 .main-navigation .menu > ul li a,
 .main-navigation .menu > div > ul li a {
-    /* Style top-level menu links in fallback menu */
     color: var(--primary-color);
     text-decoration: none;
     font-size: 16px;
@@ -516,60 +507,9 @@ footer {
 .main-navigation ul li a:hover,
 .main-navigation .menu > ul li a:hover,
 .main-navigation .menu > div > ul li a:hover {
-    /* Hover effect for all menu links */
     color: var(--accent-color);
     background: rgba(var(--accent-color-rgb), 0.2);
     border-radius: 5px;
-}
-
-/* Responsive Navigation */
-@media (max-width: 600px) {
-    .main-navigation ul {
-        /* Reset menu for mobile */
-        text-align: center;
-    }
-
-    .main-navigation ul li {
-        /* Stack top-level menu items vertically on mobile */
-        display: block;
-        margin: 10px 0;
-    }
-
-    .main-navigation ul ul {
-        /* Style submenus on mobile */
-        position: static; /* Stack submenus naturally below parent */
-        border: none; /* Remove border for cleaner look */
-        box-shadow: none; /* Remove shadow for simpler mobile display */
-        background: var(--sidebar-background); /* Slightly darker background for contrast */
-        min-width: 0; /* Remove min-width on mobile */
-        width: 100%; /* Full width on mobile */
-        padding: 0;
-    }
-
-    .main-navigation ul ul li {
-        /* Center submenu items on mobile */
-        text-align: center;
-    }
-
-    .main-navigation ul ul li a {
-        /* Style submenu links on mobile */
-        padding: 8px 15px;
-        white-space: normal; /* Allow text wrapping on mobile for readability */
-    }
-
-    .main-navigation ul ul ul {
-        /* Style nested submenus on mobile */
-        position: static;
-        margin-left: 0;
-        background: var(--content-background); /* Match parent submenu background */
-    }
-
-    .main-navigation .menu > ul li,
-    .main-navigation .menu > div > ul li {
-        /* Style top-level menu items in fallback menu on mobile */
-        display: block;
-        margin: 10px 0;
-    }
 }
 
 /* Post Layout */
@@ -612,12 +552,10 @@ footer {
     color: var(--primary-color);
     text-decoration: none;
     text-transform: uppercase;
-    transition: color 0.3s ease;
 }
 
 .post-title a:hover {
     color: var(--accent-color);
-    text-shadow: 0 0 5px var(--accent-color);
 }
 
 .post-meta {
@@ -630,7 +568,6 @@ footer {
 .post-meta a {
     color: var(--primary-color);
     text-decoration: none;
-    transition: color 0.3s ease;
 }
 
 .post-meta a:hover {
@@ -678,7 +615,7 @@ footer {
     text-decoration: none;
     font-weight: 400;
     border-radius: 5px;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: background 0.3s ease;
     font-family: var(--body-font);
     font-size: 14px;
 }
@@ -694,7 +631,7 @@ footer {
     margin: 20px 0;
 }
 
-.nav-links a {
+.nav-links a, .nav-links span {
     display: inline-block;
     padding: 10px 15px;
     margin: 0 5px;
@@ -704,125 +641,14 @@ footer {
     border-radius: 5px;
     font-family: var(--body-font);
     font-size: 14px;
-    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.nav-links .current {
+    background: var(--primary-color);
+    color: #1a1a1a;
 }
 
 .nav-links a:hover {
     background: var(--accent-color);
     color: #fff;
-}
-
-/* Category Archive Page */
-.page-header {
-    margin-bottom: 30px;
-    text-align: center;
-    background: var(--sidebar-background); /* Distinct background to differentiate */
-    padding: 15px 20px; /* Add padding for separation */
-    border-bottom: 2px solid var(--border-color); /* Subtle separator */
-    border-radius: 5px;
-}
-
-.page-title {
-    font-size: 28px;
-    color: var(--accent-color); /* Use accent color to differentiate from header */
-    text-transform: uppercase;
-    margin: 0 0 10px;
-    font-family: var(--body-font);
-    text-shadow: 0 0 3px var(--accent-color); /* Reduced shadow intensity */
-}
-
-.archive-description {
-    font-size: 16px;
-    color: var(--meta-color);
-    font-family: var(--body-font);
-    line-height: 1.6;
-}
-
-.no-results {
-    text-align: center;
-    padding: 20px;
-}
-
-.no-results .page-title {
-    font-size: 24px;
-    color: var(--primary-color);
-    margin-bottom: 10px;
-}
-
-.no-results p {
-    font-size: 16px;
-    color: var(--meta-color);
-    font-family: var(--body-font);
-}
-
-/* Responsive Adjustments */
-@media (max-width: 600px) {
-    .main-content,
-    .sidebar {
-        width: 100%;
-        margin: 170px 0 60px;
-        padding: 15px;
-    }
-
-    .main-content.has-admin-bar,
-    .sidebar.has-admin-bar {
-        margin-top: 202px;
-    }
-
-    @media screen and (max-width: 782px) {
-        .main-content.has-admin-bar,
-        .sidebar.has-admin-bar {
-            margin-top: 216px;
-        }
-    }
-
-    .sidebar.has-scrollbar {
-        width: 100%;
-    }
-
-    .posts-wrapper {
-        max-width: 100%;
-        padding: 0 10px;
-    }
-
-    .post-item {
-        margin-bottom: 20px;
-        padding: 15px;
-    }
-
-    .post-image {
-        max-height: 300px;
-    }
-
-    .post-title {
-        font-size: 20px;
-        margin: 10px 0;
-    }
-
-    .post-meta {
-        font-size: 12px;
-        margin-bottom: 10px;
-    }
-
-    .post-excerpt {
-        font-size: 14px;
-    }
-
-    .read-more {
-        padding: 8px 16px;
-        font-size: 13px;
-    }
-
-    .page-header {
-        margin-bottom: 20px;
-        padding: 10px 15px;
-    }
-
-    .page-title {
-        font-size: 24px;
-    }
-
-    .archive-description {
-        font-size: 14px;
-    }
 }
