@@ -468,13 +468,28 @@ footer {
 }
 
 .main-navigation ul ul li a {
-    color: var(--primary-color);
+    /* Style submenu links */
+    color: var(--text-color);
     font-size: 14px;
     font-family: var(--body-font);
+    padding: 8px 15px; /* Add padding for better spacing */
+    display: block; /* Make links full-width for easier clicking */
+    white-space: nowrap; /* Prevent text wrapping to ensure submenu width fits content */
+    transition: background 0.3s, color 0.3s; /* Smooth transition for hover effects */
 }
 
 .main-navigation ul ul li a:hover {
-    color: var(--accent-color);
+    /* Hover effect for submenu links */
+    color: var(--primary-color);
+    background: var(--sidebar-background);
+}
+
+/* Nested Submenus (Third Level and Beyond) */
+.main-navigation ul ul ul {
+    /* Position nested submenus to the right of their parent */
+    top: 0;
+    left: 100%;
+    margin-left: 1px; /* Small gap to prevent overlap */
 }
 
 /* Fallback menu styling */
@@ -651,4 +666,20 @@ footer {
 .nav-links a:hover {
     background: var(--accent-color);
     color: #fff;
+}
+
+/* Ensure Admin Only Checkbox is Visible in Customizer */
+.customize-control-nav_menu_item .field-admin-only {
+    display: block !important;
+    margin: 10px 0;
+    padding: 5px;
+}
+
+.customize-control-nav_menu_item .field-admin-only label {
+    font-size: 14px;
+    color: #333;
+}
+
+.customize-control-nav_menu_item .gamer-heaven-admin-only-checkbox {
+    margin-right: 5px;
 }
