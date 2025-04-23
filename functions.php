@@ -38,6 +38,7 @@ function gamer_heaven_setup() {
 
     add_theme_support('post-formats', array('gallery', 'video'));
     load_theme_textdomain('gamer-heaven', get_template_directory() . '/languages');
+
 }
 add_action('after_setup_theme', 'gamer_heaven_setup');
 
@@ -615,5 +616,6 @@ function gamer_heaven_get_admin_only_checkbox() {
     wp_send_json_error('Invalid item ID');
 }
 add_action('wp_ajax_gamer_heaven_get_admin_only_checkbox', 'gamer_heaven_get_admin_only_checkbox');
+
 
 ?>

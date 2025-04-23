@@ -1,6 +1,13 @@
 <?php get_header(); ?>
     <div class="main-content">
         <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+            <?php if (has_post_thumbnail()) : ?>
+                <div class="post-item">
+                    <div class="featured-image">
+                        <?php the_post_thumbnail('full', array('class' => 'featured-img')); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
             <h2><?php the_title(); ?></h2>
             <div class="post-content">
                 <?php the_content(); ?>
