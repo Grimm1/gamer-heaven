@@ -227,7 +227,7 @@ if (class_exists('WP_Customize_Control')) {
                         $link = wp_parse_args($link, array('name' => '', 'url' => '', 'icon' => ''));
                         ?>
                         <div class="social-repeater-field" data-index="<?php echo esc_attr($index); ?>">
-                            <div class="social-repeater-row">
+                            <div class="social-repeater SINGLE-row">
                                 <label>
                                     <span><?php _e('Platform Name', 'gamer-heaven'); ?></span>
                                     <input type="text" class="social-repeater-name" value="<?php echo esc_attr($link['name']); ?>" />
@@ -321,7 +321,7 @@ function gamer_heaven_customizer_settings($wp_customize) {
         'transport'        => 'postMessage',
     ));
 
-    $wp_customize->add_control(new WP_Customize_Media_Control($wp_customize, 'gamer_heaven_login_logo', array(
+    $wp_customize->add_control(new WP_CUstomize_Media_Control($wp_customize, 'gamer_heaven_login_logo', array(
         'label'       => __('Login Page Logo', 'gamer-heaven'),
         'section'     => 'gamer_heaven_login_page',
         'mime_type'   => 'image',
@@ -505,5 +505,54 @@ function gamer_heaven_output_background_images() {
     }
 }
 add_action('wp_footer', 'gamer_heaven_output_background_images');
+
+/**
+ * Add "Admin Only" checkbox to nav menu items
+ */
+function gamer_heaven_nav_menu_item_fields($item_id, $item, $depth, $args, $id) {
+    error_log('Gamer Heaven: Rendering nav menu item fields for item ' . $item_id);
+    $admin_only = get_post_meta($item_id, '_menu_item_admin_only', true);
+    ?>
+    <p class="field-admin-only description description-wide">
+        <label for="edit-menu-item-admin-only-<?php echo esc_attr($item_id); ?>">
+            <input type="checkbox" id="edit-menu-item-admin-only-<?php echo esc_attr($item_id); ?>" name="menu-item-admin-only[<?php echo esc_attr($item_id); ?>]" <?php checked($admin_only, '1'); ?> />
+            <?php _e('Admin Only (Visible only to administrators)', 'gamer-heaven'); ?>
+        </label>
+    </p>
+    <?php
+}
+add_action('wp_nav_menu_item_custom_fields', 'gamer_heaven_nav_menu_item_fields', 10, 5);
+
+/**
+ * Save the "Admin Only" checkbox value
+ */
+function gamer_heaven_save_nav_menu_item_fields($menu_id, $menu_item_db_id, $args) {
+    if (isset($_POST['menu-item-admin-only'][$menu_item_db_id])) {
+        update_post_meta($menu_item_db_id, '_menu_item_admin_only', '1');
+    } else {
+        delete_post_meta($menu_item_db_id, '_menu_item_admin_only');
+    }
+}
+add_action('wp_update_nav_menu_item', 'gamer_heaven_save_nav_menu_item_fields', 10, 3);
+
+/**
+ * Filter menu items to hide "Admin Only" links from non-admins
+ */
+function gamer_heaven_filter_nav_menu_items($items, $args) {
+    if (is_admin()) {
+        return $items; // Don't filter in the admin area
+    }
+
+    $filtered_items = array();
+    foreach ($items as $item) {
+        $admin_only = get_post_meta($item->ID, '_menu_item_admin_only', true);
+        if ($admin_only && !current_user_can('manage_options')) {
+            continue; // Skip this item if it's admin-only and the user isn't an admin
+        }
+        $filtered_items[] = $item;
+    }
+    return $filtered_items;
+}
+add_filter('wp_nav_menu_objects', 'gamer_heaven_filter_nav_menu_items', 10, 2);
 
 ?>
