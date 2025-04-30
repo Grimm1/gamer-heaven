@@ -595,27 +595,53 @@ add_action('customize_controls_enqueue_scripts', 'gamer_heaven_enqueue_customize
 /**
  * AJAX handler to get "Admin Only" checkbox HTML for Customizer
  */
-function gamer_heaven_get_admin_only_checkbox() {
-    if (isset($_POST['item_id']) && is_numeric($_POST['item_id'])) {
-        $item_id = absint($_POST['item_id']);
-        $admin_only = get_post_meta($item_id, '_menu_item_admin_only', true);
-        ob_start();
-        ?>
-        <p class="field-admin-only description description-wide">
-            <label for="edit-menu-item-admin-only-<?php echo esc_attr($item_id); ?>">
-                <input type="checkbox" id="edit-menu-item-admin-only-<?php echo esc_attr($item_id); ?>" class="gamer-heaven-admin-only-checkbox" name="menu-item-admin-only[<?php echo esc_attr($item_id); ?>]" <?php checked($admin_only, '1'); ?> value="1" />
-                <?php _e('Admin Only (Visible only to administrators)', 'gamer-heaven'); ?>
-            </label>
-        </p>
-        <?php
-        $html = ob_get_clean();
-        error_log('Gamer Heaven: Generated admin-only checkbox HTML for item ' . $item_id);
-        wp_send_json_success($html);
+function custom_trim_excerpt($text = '') {
+    //error_log('Gamer Heaven: custom_trim_excerpt filter is running for post ID: ' . get_the_ID());
+
+    // Use custom excerpt if available, otherwise use post content
+    $raw_excerpt = $text;
+    if ($text === '' && function_exists('get_post_field')) {
+        $text = get_post_field('post_excerpt', get_the_ID()); // Try custom excerpt field first
+        if ($text === '') {
+            $text = get_the_content(''); // Fallback to post content
+            //error_log('Gamer Heaven: Custom excerpt empty, using post content');
+        } else {
+            error_log('Gamer Heaven: Using custom excerpt');
+        }
     }
-    error_log('Gamer Heaven: Invalid item ID in get_admin_only_checkbox');
-    wp_send_json_error('Invalid item ID');
+    //error_log('Gamer Heaven: Raw excerpt input: ' . substr($text, 0, 500));
+
+    // Remove Gutenberg shortcode blocks
+    $text = preg_replace('/<!--\s*wp:shortcode\s*-->.*?<!--\s*\/wp:shortcode\s*-->\s*/s', '', $text);
+
+    // Remove Free Gallery shortcodes
+    $text = preg_replace('/\[fg_gallery.*?\]/', '', $text);
+
+    // Convert <br> to spaces to avoid newline issues
+    $text = preg_replace('/<br\s*[^>]*>/i', ' ', $text);
+
+    // Process remaining shortcodes
+    $text = do_shortcode($text);
+    //error_log('Gamer Heaven: After shortcode processing: ' . substr($text, 0, 500));
+
+    // Strip all HTML tags except <p>
+    $text = strip_tags($text, '<p>');
+
+    // Trim to the desired word count
+    $excerpt_length = apply_filters('excerpt_length', 55);
+    $excerpt_more = apply_filters('excerpt_more', ' [...]');
+    $text = wp_trim_words($text, $excerpt_length, $excerpt_more);
+
+    // Apply wpautop for paragraph formatting
+    $text = wpautop($text);
+    //error_log('Gamer Heaven: Final excerpt output: ' . substr($text, 0, 500));
+
+    return $text;
 }
-add_action('wp_ajax_gamer_heaven_get_admin_only_checkbox', 'gamer_heaven_get_admin_only_checkbox');
 
-
+// Remove default excerpt filter with multiple priorities
+remove_filter('get_the_excerpt', 'wp_trim_excerpt', 10);
+remove_filter('get_the_excerpt', 'wp_trim_excerpt', 20);
+// Add custom filter with high priority
+add_filter('get_the_excerpt', 'custom_trim_excerpt', 100);
 ?>

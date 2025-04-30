@@ -1,11 +1,21 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Skip execution on preview pages (e.g., gallery preview with fg_preview parameter)
+    if (window.location.search.includes('fg_preview')) {
+        return;
+    }
+
     const sidebar = document.querySelector('.sidebar');
     const container = document.querySelector('.container');
+
+    // Exit early if sidebar or container is missing
+    if (!sidebar || !container) {
+        return;
+    }
 
     function checkSidebarScrollbar() {
         // Check if sidebar content height exceeds its client height
         const hasScrollbar = sidebar.scrollHeight > sidebar.clientHeight;
-        
+
         // Toggle .has-scrollbar class
         if (hasScrollbar) {
             sidebar.classList.add('has-scrollbar');
@@ -19,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Run on load
     checkSidebarScrollbar();
 
-    // Run on window resize or content change
+    // Run on window resize
     window.addEventListener('resize', checkSidebarScrollbar);
 
     // Observe changes in sidebar content (e.g., dynamic widgets)
