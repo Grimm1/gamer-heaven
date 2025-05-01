@@ -2,12 +2,9 @@
     'use strict';
 
     api.bind('ready', function() {
-        console.log('Gamer Heaven: Customizer menu script loaded at ' + new Date().toISOString());
-
-        // Ensure columns is defined to prevent nav-menu.js error
+        // Define columns to prevent nav-menu.js error (WordPress bug workaround)
         if (typeof columns === 'undefined') {
             window.columns = { available: [], selected: [] };
-            console.warn('Gamer Heaven: Defined fallback columns to prevent nav-menu.js error');
         }
 
         // Function to add checkbox to menu item settings
@@ -16,24 +13,18 @@
                 var $settings = $(this);
                 var itemId = $settings.find('input.edit-menu-item-id').val();
                 if (!$settings.find('.field-admin-only').length && itemId) {
-                    console.log('Gamer Heaven: Attempting to add checkbox for item ' + itemId);
                     $.ajax({
                         url: gamer_heaven_customizer.ajaxurl,
                         type: 'POST',
                         data: {
                             action: 'gamer_heaven_get_admin_only_checkbox',
-                            item_id: itemId
+                            item_id: itemId,
+                            nonce: gamer_heaven_customizer.nonce
                         },
                         success: function(response) {
                             if (response.success) {
                                 $settings.append(response.data);
-                                console.log('Gamer Heaven: Added admin-only checkbox for item ' + itemId);
-                            } else {
-                                console.error('Gamer Heaven: Failed to load admin-only checkbox for item ' + itemId + ': ' + response.data);
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Gamer Heaven: AJAX error for item ' + itemId + ': ' + error);
                         }
                     });
                 }
@@ -61,27 +52,8 @@
         // Handle menu changes if nav_menus control exists
         if (api.control('nav_menus')) {
             api.control('nav_menus').bind('change', function() {
-                console.log('Gamer Heaven: nav_menus control changed');
                 setTimeout(addAdminOnlyCheckbox, 500);
             });
-        } else {
-            console.warn('Gamer Heaven: nav_menus control not found');
-            // Fallback: Re-check after delay
-            setTimeout(function() {
-                if (api.control('nav_menus')) {
-                    api.control('nav_menus').bind('change', function() {
-                        console.log('Gamer Heaven: nav_menus control changed (delayed)');
-                        setTimeout(addAdminOnlyCheckbox, 500);
-                    });
-                }
-            }, 2000);
         }
-
-        // Log checkbox state changes
-        $(document).on('change', '.gamer-heaven-admin-only-checkbox', function() {
-            var $checkbox = $(this);
-            var itemId = $checkbox.closest('.menu-item-settings').find('input.edit-menu-item-id').val();
-            console.log('Gamer Heaven: Admin-only checkbox changed for item ' + itemId + ': ' + ($checkbox.is(':checked') ? 'checked' : 'unchecked'));
-        });
     });
 })(jQuery, wp.customize);

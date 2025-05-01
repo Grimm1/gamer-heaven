@@ -1,27 +1,17 @@
 /* Gamer Heaven Login Page Styles */
-:root {
-    --primary-color: #00ffcc;
-    --accent-color: #ff007a;
-    --background-color: #1a1a1a;
-    --content-background: #2e2e2e;
-    --gradient-start: #1c2526;
-    --gradient-end: #2e3b3e;
-    --border-color: #444;
-    --text-color: #e0e0e0;
-    --meta-color: #b0b0b0;
-    --body-font: 'Orbitron', Arial, sans-serif;
-}
+
+/* Note: :root variables and critical language switcher positioning are defined in functions.php via wp_add_inline_style */
 
 body.login {
-    background: var(--background-color) !important;
-    font-family: var(--body-font) !important;
-    color: var(--text-color) !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    min-height: 100vh !important;
-    margin: 0 !important;
-    overflow: auto !important;
+    background: var(--background-color);
+    font-family: var(--body-font);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: auto;
 }
 
 body.login::before {
@@ -31,18 +21,18 @@ body.login::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end)) !important;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
     opacity: 0.5;
     z-index: -1;
 }
 
-/* Optional: Reuse theme background images */
+/* Background images */
 body.login .gamer-heaven-left-background,
 body.login .gamer-heaven-right-background {
     position: fixed;
-    z-index: -1;
+    z-index: -2;
     max-width: 50vw;
-    max-height: 100vh;
+    max-height: 80vh;
     object-fit: cover;
     opacity: 0.8;
     transition: opacity 0.3s;
@@ -69,13 +59,13 @@ body.login .gamer-heaven-right-background {
     body.login .gamer-heaven-left-background,
     body.login .gamer-heaven-right-background {
         max-width: 40vw;
-        max-height: 80vh;
+        max-height: 60vh;
         bottom: 10px;
     }
 }
 
-/* Center all login elements */
-.login {
+/* Center login elements */
+body.login .login {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -83,195 +73,254 @@ body.login .gamer-heaven-right-background {
     min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
-}
-
-.login h1 a {
-    background-size: contain !important;
-    width: 300px !important;
-    height: 100px !important;
-    margin: 0 auto 25px !important;
-    display: block !important;
-    text-indent: -9999px !important;
-}
-
-.login #loginform {
-    background: var(--content-background) !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 5px !important;
-    padding: 26px 24px !important;
-    box-shadow: 0 0 10px rgba(var(--primary-color-rgb), 0.3) !important;
-    max-width: 320px !important;
     width: 100%;
-    margin: 0 auto 10px !important;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
-.login label {
-    color: var(--text-color) !important;
-    font-size: 14px !important;
-    text-transform: uppercase !important;
+body.login h1 a {
+    background-size: contain !important;
+    width: 300px;
+    height: 100px;
+    margin: 0 auto 25px;
+    display: block;
+    text-indent: -9999px;
+    title: "Login to <?php echo esc_attr(get_bloginfo('name')); ?>";
 }
 
-.login input[type="text"],
-.login input[type="password"] {
-    background: var(--sidebar-background) !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-color) !important;
-    border-radius: 5px !important;
-    padding: 8px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    font-family: var(--body-font) !important;
+body.login #loginform {
+    background: var(--content-background);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 26px 24px;
+    box-shadow: 0 0 10px rgba(var(--primary-color-rgb), 0.3);
+    max-width: 320px;
+    width: 100%;
+    margin: 0 auto 15px;
 }
 
-.login input[type="text"]:focus,
-.login input[type="password"]:focus {
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 0 5px rgba(var(--primary-color-rgb), 0.5) !important;
+body.login label {
+    color: var(--text-color);
+    font-size: 14px;
+    text-transform: uppercase;
 }
 
-.login input[type="submit"] {
-    background: var(--primary-color) !important;
-    color: #1a1a1a !important;
-    border: none !important;
-    padding: 10px 20px !important;
-    border-radius: 5px !important;
-    font-family: var(--body-font) !important;
-    font-size: 14px !important;
-    text-transform: uppercase !important;
-    cursor: pointer !important;
-    transition: background 0.3s !important;
+body.login input[type="text"],
+body.login input[type="password"] {
+    background: var(--sidebar-background);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--body-font);
 }
 
-.login input[type="submit"]:hover {
-    background: var(--accent-color) !important;
-    color: #fff !important;
+body.login input[type="text"]:focus,
+body.login input[type="password"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(var(--primary-color-rgb), 0.5);
 }
 
-.login .button-primary {
-    background: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
-    color: #1a1a1a !important;
-    text-transform: uppercase !important;
-    font-family: var(--body-font) !important;
+body.login input[type="submit"] {
+    background: var(--primary-color);
+    color: #1a1a1a;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: var(--body-font);
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-.login .button-primary:hover {
-    background: var(--accent-color) !important;
-    border-color: var(--accent-color) !important;
-    color: #fff !important;
+body.login input[type="submit"]:hover {
+    background: var(--accent-color);
+    color: #fff;
+}
+
+body.login .button-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #1a1a1a;
+    text-transform: uppercase;
+    font-family: var(--body-font);
+}
+
+body.login .button-primary:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
 }
 
 /* Language Switcher */
-.login #language-switcher {
-    margin: 10px auto 10px !important;
-    max-width: 320px !important;
+body.login div.language-switcher,
+body.login #language-switcher,
+body.login .wpml-ls {
+    max-width: 320px;
     width: 100%;
     text-align: center;
 }
 
-.login #language-switcher select {
-    background: var(--sidebar-background) !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-color) !important;
-    border-radius: 5px !important;
-    padding: 8px !important;
-    font-family: var(--body-font) !important;
-    font-size: 14px !important;
+body.login div.language-switcher form,
+body.login #language-switcher form,
+body.login .wpml-ls form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+body.login div.language-switcher select,
+body.login #language-switcher select,
+body.login .wpml-ls select {
+    background: var(--sidebar-background);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 5px;
+    padding: 8px;
+    font-family: var(--body-font);
+    font-size: 14px;
     width: 100%;
     max-width: 200px;
 }
 
-.login #language-switcher select:focus {
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 0 5px rgba(var(--primary-color-rgb), 0.5) !important;
+body.login div.language-switcher select:focus,
+body.login #language-switcher select:focus,
+body.login .wpml-ls select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(var(--primary-color-rgb), 0.5);
 }
 
-.login #language-switcher input[type="submit"] {
-    background: var(--primary-color) !important;
-    color: #1a1a1a !important;
-    border: none !important;
-    padding: 8px 16px !important;
-    border-radius: 5px !important;
-    font-family: var(--body-font) !important;
-    font-size: 14px !important;
-    text-transform: uppercase !important;
-    cursor: pointer !important;
-    transition: background 0.3s !important;
-    margin-left: 5px;
+body.login div.language-switcher input[type="submit"],
+body.login #language-switcher input[type="submit"],
+body.login .wpml-ls input[type="submit"] {
+    background: var(--primary-color);
+    color: #1a1a1a;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-family: var(--body-font);
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-.login #language-switcher input[type="submit"]:hover {
-    background: var(--accent-color) !important;
-    color: #fff !important;
+body.login div.language-switcher input[type="submit"]:hover,
+body.login #language-switcher input[type="submit"]:hover,
+body.login .wpml-ls input[type="submit"]:hover {
+    background: var(--accent-color);
+    color: #fff;
 }
 
-.login #nav,
-.login #backtoblog {
-    text-align: center !important;
-    margin: 10px auto !important;
-    max-width: 320px !important;
+/* Fallback to center language switcher when outside #login */
+body.login .language-switcher {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px auto;
+    max-width: 320px;
+    width: 100%;
+    float: none !important;
+    clear: both !important;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+body.login #nav,
+body.login #backtoblog {
+    text-align: center;
+    margin: 15px auto;
+    max-width: 320px;
     width: 100%;
 }
 
-.login #nav a,
-.login #backtoblog a {
-    color: var(--primary-color) !important;
-    text-decoration: none !important;
-    font-size: 13px !important;
-    font-family: var(--body-font) !important;
+body.login #nav a,
+body.login #backtoblog a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 13px;
+    font-family: var(--body-font);
 }
 
-.login #nav a:hover,
-.login #backtoblog a:hover {
-    color: var(--accent-color) !important;
+body.login #nav a:hover,
+body.login #backtoblog a:hover {
+    color: var(--accent-color);
 }
 
-.login .message,
-.login .success,
-.login .error {
-    background: var(--sidebar-background) !important;
-    border-left: 4px solid var(--primary-color) !important;
-    color: var(--text-color) !important;
-    padding: 12px !important;
-    margin: 0 auto 20px !important;
-    max-width: 320px !important;
+body.login .message,
+body.login .success,
+body.login .error {
+    background: var(--sidebar-background);
+    border-left: 4px solid var(--primary-color);
+    color: var(--text-color);
+    padding: 12px;
+    margin: 0 auto 20px;
+    max-width: 320px;
     width: 100%;
-    border-radius: 5px !important;
-    font-family: var(--body-font) !important;
+    border-radius: 5px;
+    font-family: var(--body-font);
     text-align: center;
 }
 
 @media (max-width: 600px) {
-    .login {
+    body.login .login {
         padding: 15px;
     }
 
-    .login #loginform {
-        padding: 20px !important;
-        max-width: 90% !important;
-    }
-
-    .login h1 a {
-        width: 200px !important;
-        height: 67px !important;
-    }
-
-    .login #language-switcher {
-        max-width: 90% !important;
-    }
-
-    .login #language-switcher select {
+    body.login #loginform {
+        padding: 20px;
         max-width: 100%;
+        width: 90%;
+        margin-bottom: 10px;
     }
 
-    .login #nav,
-    .login #backtoblog {
-        max-width: 90% !important;
+    body.login h1 a {
+        width: 200px;
+        height: 67px;
     }
 
-    .login .message,
-    .login .success,
-    .login .error {
-        max-width: 90% !important;
+    body.login div.language-switcher,
+    body.login #language-switcher,
+    body.login .wpml-ls,
+    body.login .language-switcher {
+        max-width: 100%;
+        width: 90%;
+        margin: 10px auto;
+        left: 0;
+        transform: none;
+    }
+
+    body.login div.language-switcher form,
+    body.login #language-switcher form,
+    body.login .wpml-ls form,
+    body.login .language-switcher form {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    body.login div.language-switcher input[type="submit"],
+    body.login #language-switcher input[type="submit"],
+    body.login .wpml-ls input[type="submit"],
+    body.login .language-switcher input[type="submit"] {
+        margin-left: 0;
+    }
+
+    body.login #nav,
+    body.login #backtoblog {
+        max-width: 100%;
+        width: 90%;
+        margin: 10px auto;
+    }
+
+    body.login .message,
+    body.login .success,
+    body.login .error {
+        max-width: 100%;
+        width: 90%;
     }
 }
