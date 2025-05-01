@@ -1,4 +1,6 @@
 
+![Theme Screenshot](https://github.com/Grimm1/gamer-heaven/blob/main/SampleImages/screenshot.png?raw=true)
+
 ```markdown
 # 🎮 Gamer Heaven WordPress Theme
 
