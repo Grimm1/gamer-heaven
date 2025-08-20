@@ -5,12 +5,12 @@
  * This file contains the theme's setup, enqueues, and custom functionality.
  *
  * @package Gamer_Heaven
- * @version 1.0.8
+ * @version 1.0.11
  * @license GPL-2.0-or-later
  * @link https://developer.wordpress.org/themes/
  */
 
-define('GAMER_HEAVEN_VERSION', '1.0.8');
+define('GAMER_HEAVEN_VERSION', '1.0.11');
 
 /**
  * Set up theme defaults and register support for various WordPress features.
@@ -54,7 +54,7 @@ function gamer_heaven_scripts()
 {
     wp_enqueue_style('gamer-heaven-style', get_stylesheet_uri(), array(), GAMER_HEAVEN_VERSION);
     wp_enqueue_style('gamer-heaven-fonts', 'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Black+Ops+One&display=swap', array(), null);
-    wp_enqueue_script('gamer-heaven-scrollbar', get_template_directory_uri() . '/js/scrollbar-detect.js', array(), GAMER_HEAVEN_VERSION, true);
+    wp_enqueue_script('gamer-heaven-scrollbar', get_template_directory_uri() . '/js/scrollbar-detect.js', array('jquery'), GAMER_HEAVEN_VERSION, true);
 
     $color_scheme = get_theme_mod('gamer_heaven_color_scheme', 'sci-fi');
     $custom_css = ':root {';
@@ -128,7 +128,177 @@ function gamer_heaven_scripts()
 }
 add_action('wp_enqueue_scripts', 'gamer_heaven_scripts');
 
+/**
+ * Ensure jQuery and plugin scripts are loaded correctly
+ */
+function gamer_heaven_fix_plugin_scripts() {
+    // Enqueue jQuery explicitly
+    wp_enqueue_script('jquery');
+}
+add_action('wp_enqueue_scripts', 'gamer_heaven_fix_plugin_scripts', 10);
 
+/**
+ * Ensure localized script data is preserved and logged
+ */
+function gamer_heaven_ensure_localized_scripts() {
+    global $wp_scripts;
+    // Log all localized data for debugging
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        foreach ($wp_scripts->queue as $handle) {
+            if (isset($wp_scripts->registered[$handle]->extra['data'])) {
+                $data = $wp_scripts->registered[$handle]->extra['data'];
+                //error_log('Gamer Heaven: Localized data for ' . $handle . ' at wp_print_scripts: ' . substr($data, 0, 200) . (strlen($data) > 200 ? '...' : ''));
+            }
+        }
+    }
+}
+add_action('wp_print_scripts', 'gamer_heaven_ensure_localized_scripts', 100);
+
+/**
+ * Ensure shortcodes are processed to populate localization data, avoiding duplicates
+ */
+function gamer_heaven_ensure_shortcode_processing() {
+    static $processed = false;
+    if ($processed) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('Gamer Heaven: Skipped duplicate shortcode processing at template_redirect');
+        }
+        return;
+    }
+
+    if (is_singular() || is_active_sidebar('sidebar-1')) {
+        global $wp_query;
+        $shortcodes_processed = false;
+
+        // Process post content
+        if (is_singular() && isset($wp_query->post->post_content)) {
+            $content = $wp_query->post->post_content;
+            if (has_shortcode($content, 'free_gallery')) {
+                // Let normal the_content rendering handle shortcodes
+                $shortcodes_processed = true;
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('Gamer Heaven: Detected [free_gallery] in post content for post ID ' . $wp_query->post->ID . ' at template_redirect, deferring to the_content');
+                }
+            }
+        }
+
+        // Process sidebar widgets
+        if (is_active_sidebar('sidebar-1')) {
+            global $wp_registered_widgets;
+            $sidebar_content = '';
+            foreach ($wp_registered_widgets as $widget) {
+                if (isset($widget['callback']) && is_callable($widget['callback'])) {
+                    ob_start();
+                    call_user_func($widget['callback'], $widget['params'][0], $widget['params']);
+                    $widget_content = ob_get_clean();
+                    if (strpos($widget_content, '[free_gallery') !== false) {
+                        $sidebar_content .= $widget_content;
+                    }
+                }
+            }
+            if (!empty($sidebar_content)) {
+                // Process shortcodes in sidebar content
+                $processed_content = apply_filters('widget_text', $sidebar_content);
+                $shortcodes_processed = true;
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('Gamer Heaven: Processed sidebar shortcodes at template_redirect');
+                }
+            }
+        }
+
+        if (!$shortcodes_processed && defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('Gamer Heaven: No [free_gallery] shortcodes found in post or sidebar at template_redirect');
+        }
+    }
+
+    $processed = true;
+}
+add_action('template_redirect', 'gamer_heaven_ensure_shortcode_processing', 10);
+
+/**
+ * Preserve fgLightboxData across multiple enqueuings
+ */
+function gamer_heaven_preserve_fg_lightbox_data($data, $handle) {
+    if (strpos($handle, 'fg-') !== false && isset($data['galleries'])) {
+        static $fg_lightbox_data = null;
+        if ($fg_lightbox_data === null) {
+            $fg_lightbox_data = $data;
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('Gamer Heaven: Initialized fgLightboxData for ' . $handle . ': ' . json_encode($data));
+            }
+        } elseif (empty($data['galleries']) && !empty($fg_lightbox_data['galleries'])) {
+            $data = $fg_lightbox_data;
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('Gamer Heaven: Restored fgLightboxData for ' . $handle . ' to prevent empty galleries');
+            }
+        }
+    }
+    return $data;
+}
+add_filter('wp_script_data', 'gamer_heaven_preserve_fg_lightbox_data', 10, 2);
+
+/**
+ * Debug final content output
+ */
+function gamer_heaven_debug_content_output($content) {
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('Gamer Heaven: Final the_content output: ' . substr($content, 0, 200) . (strlen($content) > 200 ? '...' : ''));
+        if (strpos($content, 'fg-gallery') !== false) {
+            error_log('Gamer Heaven: Detected fg-gallery in final the_content output');
+        }
+    }
+    return $content;
+}
+add_filter('the_content', 'gamer_heaven_debug_content_output', 100);
+
+function gamer_heaven_debug_widget_output($content) {
+    if (defined('WP_DEBUG') && WP_DEBUG && !empty($content)) {
+        error_log('Gamer Heaven: Final widget_text output: ' . substr($content, 0, 200) . (strlen($content) > 200 ? '...' : ''));
+        if (strpos($content, 'fg-gallery') !== false) {
+            error_log('Gamer Heaven: Detected fg-gallery in final widget_text output');
+        }
+    }
+    return $content;
+}
+add_filter('widget_text', 'gamer_heaven_debug_widget_output', 100);
+
+/**
+ * Add JavaScript error handler and localization diagnostics
+ */
+function gamer_heaven_plugin_compatibility() {
+    ?>
+    <script>
+        (function() {
+            // Log JavaScript errors
+            window.addEventListener('error', function(event) {
+                console.error('Gamer Heaven JS Error:', {
+                    message: event.message,
+                    file: event.filename,
+                    line: event.lineno,
+                    column: event.colno
+                });
+            });
+
+            // Ensure jQuery is loaded
+            if (typeof jQuery === 'undefined') {
+                console.error('Gamer Heaven: jQuery is not loaded. Plugin scripts may fail.');
+            } else {
+                console.log('Gamer Heaven: jQuery loaded successfully.');
+            }
+
+            // Check for localized script data
+            window.addEventListener('load', function() {
+                document.querySelectorAll('script').forEach(function(script) {
+                    if (script.textContent.includes('var ')) {
+                        console.log('Gamer Heaven: Found script with localization data:', script.textContent.substring(0, 100) + '...');
+                    }
+                });
+            });
+        })();
+    </script>
+    <?php
+}
+add_action('wp_footer', 'gamer_heaven_plugin_compatibility');
 
 /**
  * Enqueue login page styles
@@ -138,7 +308,7 @@ function gamer_heaven_login_styles() {
     if (file_exists($login_css_path)) {
         wp_enqueue_style('gamer-heaven-login', get_template_directory_uri() . '/css/login.css', array(), GAMER_HEAVEN_VERSION);
     }
-    wp_enqueue_style('gamer-heaven-fonts', 'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Black+Ops+One&display=swap', array(), null);
+    wp_enqueue_style('gamer_heaven-fonts', 'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Black+Ops+One&display=swap', array(), null);
 
     // Inline CSS for color scheme, login logo, and language switcher
     $color_scheme = get_theme_mod('gamer_heaven_color_scheme', 'sci-fi');
@@ -305,9 +475,6 @@ function gamer_heaven_login_logo_url()
 }
 add_filter('login_headerurl', 'gamer_heaven_login_logo_url');
 
-
-
-add_action('login_footer', 'gamer_heaven_move_language_switcher');
 /**
  * Customize login page logo title
  */
@@ -466,6 +633,20 @@ function gamer_heaven_customizer_settings($wp_customize)
         'priority' => 20,
     )));
 
+    $wp_customize->add_setting('gamer_heaven_show_header_search', array(
+        'default' => true,
+        'sanitize_callback' => 'gamer_heaven_sanitize_checkbox',
+        'capability' => 'edit_theme_options',
+        'transport' => 'postMessage',
+    ));
+
+    $wp_customize->add_control('gamer_heaven_show_header_search', array(
+        'label' => __('Show Search Bar in Header', 'gamer-heaven'),
+        'section' => 'gamer_heaven_theme_options',
+        'type' => 'checkbox',
+        'priority' => 30,
+    ));
+
     // Login Page Section
     $wp_customize->add_section('gamer_heaven_login_page', array(
         'title' => __('Login Page', 'gamer-heaven'),
@@ -559,20 +740,6 @@ function gamer_heaven_customizer_settings($wp_customize)
         'flex_width' => true,
         'flex_height' => true,
     )));
-    $wp_customize->add_setting('gamer_heaven_show_header_search', array(
-        'default' => true,
-        'sanitize_callback' => 'gamer_heaven_sanitize_checkbox',
-        'capability' => 'edit_theme_options',
-        'transport' => 'postMessage', // Enable live preview
-    ));
-
-    $wp_customize->add_control('gamer_heaven_show_header_search', array(
-        'label' => __('Show Search Bar in Header', 'gamer-heaven'),
-        'section' => 'gamer_heaven_theme_options',
-        'type' => 'checkbox',
-        'priority' => 30,
-    ));
-
 }
 add_action('customize_register', 'gamer_heaven_customizer_settings');
 
@@ -813,36 +980,6 @@ function gamer_heaven_enqueue_customizer_menu_scripts()
     );
 }
 add_action('customize_controls_enqueue_scripts', 'gamer_heaven_enqueue_customizer_menu_scripts');
-
-/**
- * Custom excerpt filter to handle shortcodes and formatting
- */
-function custom_trim_excerpt($text = '')
-{
-    $raw_excerpt = $text;
-    if ($text === '' && function_exists('get_post_field')) {
-        $text = get_post_field('post_excerpt', get_the_ID());
-        if ($text === '') {
-            $text = get_the_content('');
-        }
-    }
-
-    $text = preg_replace('/<!--\s*wp:shortcode\s*-->.*?<!--\s*\/wp:shortcode\s*-->\s*/s', '', $text);
-    $text = preg_replace('/\[fg_gallery.*?\]/', '', $text);
-    $text = preg_replace('/<br\s*[^>]*>/i', ' ', $text);
-    $text = do_shortcode($text);
-    $text = strip_tags($text, '<p>');
-    $excerpt_length = apply_filters('excerpt_length', 55);
-    $excerpt_more = apply_filters('excerpt_more', ' [...]');
-    $text = wp_trim_words($text, $excerpt_length, $excerpt_more);
-    $text = wpautop($text);
-
-    return $text;
-}
-
-remove_filter('get_the_excerpt', 'wp_trim_excerpt', 10);
-remove_filter('get_the_excerpt', 'wp_trim_excerpt', 20);
-add_filter('get_the_excerpt', 'custom_trim_excerpt', 100);
 
 /**
  * Custom comment callback for styling comments.

@@ -48,7 +48,7 @@
                             'menu_id' => 'primary-menu',
                             'container' => false,
                             'fallback_cb' => 'wp_page_menu',
-                            'depth' => 2,
+                            'depth' => 3,
                         ));
                         ?>
                     </nav>

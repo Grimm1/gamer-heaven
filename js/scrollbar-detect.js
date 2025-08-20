@@ -1,38 +1,45 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Skip execution on preview pages (e.g., gallery preview with fg_preview parameter)
-    if (window.location.search.includes('fg_preview')) {
-        return;
-    }
-
     const sidebar = document.querySelector('.sidebar');
     const container = document.querySelector('.container');
 
-    // Exit early if sidebar or container is missing
     if (!sidebar || !container) {
+        console.warn('Gamer Heaven: Sidebar or container missing, skipping scrollbar detection.');
         return;
     }
 
     function checkSidebarScrollbar() {
-        // Check if sidebar content height exceeds its client height
-        const hasScrollbar = sidebar.scrollHeight > sidebar.clientHeight;
-
-        // Toggle .has-scrollbar class
-        if (hasScrollbar) {
-            sidebar.classList.add('has-scrollbar');
-            container.classList.add('has-scrollbar');
-        } else {
-            sidebar.classList.remove('has-scrollbar');
-            container.classList.remove('has-scrollbar');
+        try {
+            const hasScrollbar = sidebar.scrollHeight > sidebar.clientHeight;
+            if (hasScrollbar) {
+                sidebar.classList.add('has-scrollbar');
+                container.classList.add('has-scrollbar');
+            } else {
+                sidebar.classList.remove('has-scrollbar');
+                container.classList.remove('has-scrollbar');
+            }
+        } catch (e) {
+            console.error('Gamer Heaven: Error in checkSidebarScrollbar:', e);
         }
+    }
+
+    // Throttle resize events
+    let resizeTimeout;
+    function throttledCheckSidebarScrollbar() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(checkSidebarScrollbar, 100);
     }
 
     // Run on load
     checkSidebarScrollbar();
 
     // Run on window resize
-    window.addEventListener('resize', checkSidebarScrollbar);
+    window.addEventListener('resize', throttledCheckSidebarScrollbar);
 
-    // Observe changes in sidebar content (e.g., dynamic widgets)
-    const observer = new MutationObserver(checkSidebarScrollbar);
-    observer.observe(sidebar, { childList: true, subtree: true });
+    // Observe sidebar changes with error handling
+    try {
+        const observer = new MutationObserver(throttledCheckSidebarScrollbar);
+        observer.observe(sidebar, { childList: true, subtree: true });
+    } catch (e) {
+        console.error('Gamer Heaven: Error setting up MutationObserver:', e);
+    }
 });
